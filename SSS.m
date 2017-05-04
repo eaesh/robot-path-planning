@@ -305,8 +305,8 @@ classdef SSS < handle
 	    % showEnv()
 	    %		Display the environment
 	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	    function showEnv(obj)
-            obj.sdiv.env.showEnv();
+	    function showEnv(obj, handles)
+            obj.sdiv.env.showEnv(handles);
 	    end
 
 	end
@@ -319,10 +319,10 @@ classdef SSS < handle
 	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	    % test()
 	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	    function flag = test()
-            s = SSS('env3.txt');
-            s.showEnv();
-            s.run(1);
+	    function flag = test(filename, handles)
+            s = SSS(filename);
+            s.showEnv(handles);
+%             s.run(1);
             flag = true;
         end
                 

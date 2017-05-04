@@ -120,9 +120,9 @@ classdef Environment < handle
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Display Environment:
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function obj = showEnv(obj)
-            figure(1);
-            clf(1);  % clear fig 1 (or else it overlays previous display)
+        function obj = showEnv(obj, handles)
+%             figure(1);
+            cla;  % clear axes in GUI
             axis square tight;
             alpha(0.3);	% Transparency (to show overlaps)
             % Show Bounding Box:

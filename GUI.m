@@ -78,7 +78,7 @@ function exitBttn_Callback(hObject, eventdata, handles)
 % hObject    handle to exitBttn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-close all;
+close all; % closes all the figures that are currently displayed in Matlab
 
 
 function envInput_Callback(hObject, eventdata, handles)
@@ -89,7 +89,7 @@ function envInput_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of envInput as text
 %        str2double(get(hObject,'String')) returns contents of envInput as a double
 filename = get(hObject, 'String');
-disp(filename);
+% disp(filename);
 textLabel = sprintf('environment file has been changed to: %s', filename);
 set(handles.envFeedback, 'String', textLabel);
 
@@ -112,3 +112,8 @@ function showEnvBttn_Callback(hObject, eventdata, handles)
 % hObject    handle to showEnvBttn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+filename = get(handles.envInput, 'String');
+% disp(filename);
+axes(handles.plot);
+
+SSS.test(filename, handles);
