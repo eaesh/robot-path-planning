@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 06-May-2017 10:46:29
+% Last Modified by GUIDE v2.5 06-May-2017 13:55:49
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -59,14 +59,20 @@ handles.output = hObject;
 guidata(hObject, handles);
 
 % UIWAIT makes GUI wait for user response (see UIRESUME)
+% set(handles.closeBttn,'BackgroundColor',[0.960, 0, 0.576]);
+% set(handles.exitBttn,'BackgroundColor',[0.960, 0, 0.062]);
+set(handles.showSub,'BackgroundColor',[0.909, 0.909, 0.909]);
 set(handles.showPath,'Enable','off');
 set(handles.showPath,'BackgroundColor',[0.909, 0.909, 0.909]); 
 set(handles.showSub,'Enable','off');
 set(handles.showSub,'BackgroundColor',[0.909, 0.909, 0.909]);
+set(handles.vorDiagram,'Enable','off');
+set(handles.vorDiagram,'BackgroundColor',[0.909, 0.909, 0.909]);
 textLabel = sprintf('');
 set(handles.showEnvFeedback, 'String', textLabel);
 set(handles.subDivFeedback, 'String', textLabel);
 set(handles.showPathFeedback, 'String', textLabel);
+set(handles.vorFeedback, 'String', textLabel);
 
 
 % --- Outputs from this function are returned to the command line.
@@ -80,12 +86,18 @@ function varargout = GUI_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 
 
+% --- Executes on button press in closeBttn.
+function closeBttn_Callback(hObject, eventdata, handles)
+% hObject    handle to closeBttn (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+close all; % closes all the figures that are currently displayed in MatlaB
+
 % --- Executes on button press in exitBttn.
 function exitBttn_Callback(hObject, eventdata, handles)
 % hObject    handle to exitBttn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-close all; % closes all the figures that are currently displayed in Matlab
 
 
 function envInput_Callback(hObject, eventdata, handles)
@@ -122,7 +134,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     
 end
 
-
 % --- Executes on button press in showEnvBttn.
 function showEnvBttn_Callback(hObject, eventdata, handles)
 % hObject    handle to showEnvBttn (see GCBO)
@@ -142,14 +153,18 @@ function showSub_Callback(hObject, eventdata, handles)
 % hObject    handle to showSub (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-textLabel = sprintf('... finding start box');
+textLabel = sprintf('... finding start box...');
 set(handles.subDivFeedback, 'String', textLabel);
 global pathS;
 filename = get(handles.envInput, 'String');
 axes(handles.plot);
 pathS = SSS.test(2, filename, handles);
-set(handles.showPath,'Enable','on');
-set(handles.showPath,'BackgroundColor',[0.184, 0.788, 0.678]);
+% disp('pathS?')
+% disp(pathS.hasPath)
+if pathS.hasPath == 1
+    set(handles.showPath,'Enable','on');
+    set(handles.showPath,'BackgroundColor',[0.184, 0.788, 0.678]);
+end
 
 
 % --- Executes on button press in showPath.
@@ -170,4 +185,11 @@ function showPath_KeyPressFcn(hObject, eventdata, handles)
 %	Key: name of the key that was pressed, in lower case
 %	Character: character interpretation of the key(s) that was pressed
 %	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in vorDiagram.
+function vorDiagram_Callback(hObject, eventdata, handles)
+% hObject    handle to vorDiagram (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)

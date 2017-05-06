@@ -18,6 +18,7 @@ classdef SSS < handle
 		path=[];	% path 
 		startBox=[];	% box containing the start config
 		goalBox=[];	% box containing the goal config
+        hasPath=false;
 	end
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -144,10 +145,10 @@ classdef SSS < handle
                 set(handles.subDivFeedback, 'String', textLabel);
                 return;
             end
-            textLabel = sprintf('... start is FREE!');
+            textLabel = sprintf('... start is FREE!...');
             set(handles.subDivFeedback, 'String', textLabel);
             
-            textLabel = sprintf('... finding goal box');
+            textLabel = sprintf('... finding goal box...');
             set(handles.subDivFeedback, 'String', textLabel);
             obj.goalBox = obj.makeFree(obj.sdiv.env.goal);
             if size(obj.goalBox, 2) == 0
@@ -156,7 +157,7 @@ classdef SSS < handle
                 return;
             end
             
-            textLabel = sprintf('... goal is FREE!');
+            textLabel = sprintf('... goal is FREE!...');
             set(handles.subDivFeedback, 'String', textLabel);
             
             if ~obj.makeConnected(obj.startBox, obj.goalBox)
@@ -358,17 +359,17 @@ classdef SSS < handle
 	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	    function flag = test(val, filename, handles, pathS)
             if nargin < 4
-                pathS = false;
+                pathS = 0;
             end
             s = SSS(filename);
             if (val == 1)
                 s.showEnv();
             elseif (val == 2)
-                s.mainLoop(handles);
+                flag = s.mainLoop(handles);
                 pathS = s;
-%                 if flag
-%                     s.showPath();
-%                 end
+                if flag
+                    s.hasPath = true;
+                end
             elseif (val == 3)
                 pathS.showPath(handles);
             end
