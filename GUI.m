@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 04-May-2017 11:53:59
+% Last Modified by GUIDE v2.5 06-May-2017 10:46:29
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -59,7 +59,14 @@ handles.output = hObject;
 guidata(hObject, handles);
 
 % UIWAIT makes GUI wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+set(handles.showPath,'Enable','off');
+set(handles.showPath,'BackgroundColor',[0.909, 0.909, 0.909]); 
+set(handles.showSub,'Enable','off');
+set(handles.showSub,'BackgroundColor',[0.909, 0.909, 0.909]);
+textLabel = sprintf('');
+set(handles.showEnvFeedback, 'String', textLabel);
+set(handles.subDivFeedback, 'String', textLabel);
+set(handles.showPathFeedback, 'String', textLabel);
 
 
 % --- Outputs from this function are returned to the command line.
@@ -92,6 +99,14 @@ filename = get(hObject, 'String');
 % disp(filename);
 textLabel = sprintf('environment file has been changed to: %s', filename);
 set(handles.envFeedback, 'String', textLabel);
+set(handles.showPath,'Enable','off');
+set(handles.showPath,'BackgroundColor',[0.909, 0.909, 0.909]); 
+set(handles.showSub,'Enable','off');
+set(handles.showSub,'BackgroundColor',[0.909, 0.909, 0.909]);
+textLabel = sprintf('');
+set(handles.showEnvFeedback, 'String', textLabel);
+set(handles.subDivFeedback, 'String', textLabel);
+set(handles.showPathFeedback, 'String', textLabel);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -104,6 +119,7 @@ function envInput_CreateFcn(hObject, eventdata, handles)
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
+    
 end
 
 
@@ -112,8 +128,46 @@ function showEnvBttn_Callback(hObject, eventdata, handles)
 % hObject    handle to showEnvBttn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+textLabel = sprintf('displaying environment');
+set(handles.showEnvFeedback, 'String', textLabel);
 filename = get(handles.envInput, 'String');
-% disp(filename);
 axes(handles.plot);
+flag = SSS.test(1, filename, handles);
+set(handles.showSub,'Enable','on');
+set(handles.showSub,'BackgroundColor',[0.650, 0.368, 0.819]);
 
-SSS.test(filename, handles);
+
+% --- Executes on button press in showSub.
+function showSub_Callback(hObject, eventdata, handles)
+% hObject    handle to showSub (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+textLabel = sprintf('... finding start box');
+set(handles.subDivFeedback, 'String', textLabel);
+global pathS;
+filename = get(handles.envInput, 'String');
+axes(handles.plot);
+pathS = SSS.test(2, filename, handles);
+set(handles.showPath,'Enable','on');
+set(handles.showPath,'BackgroundColor',[0.184, 0.788, 0.678]);
+
+
+% --- Executes on button press in showPath.
+function showPath_Callback(hObject, eventdata, handles)
+% hObject    handle to showPath (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global pathS;
+filename = get(handles.envInput, 'String');
+axes(handles.plot);
+SSS.test(3, filename, handles, pathS);
+
+
+% --- Executes on key press with focus on showPath and none of its controls.
+function showPath_KeyPressFcn(hObject, eventdata, handles)
+% hObject    handle to showPath (see GCBO)
+% eventdata  structure with the following fields (see MATLAB.UI.CONTROL.UICONTROL)
+%	Key: name of the key that was pressed, in lower case
+%	Character: character interpretation of the key(s) that was pressed
+%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
+% handles    structure with handles and user data (see GUIDATA)

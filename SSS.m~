@@ -138,14 +138,14 @@ classdef SSS < handle
         function flag = mainLoop(obj, handles)
             flag = false;
             
+            textLabel = sprintf('... finding start box');
+            set(handles.subDivFeedback, 'String', textLabel);
             obj.startBox = obj.makeFree(obj.sdiv.env.start);
             if size(obj.startBox, 2) == 0
                 textLabel = sprintf('NO PATH: Start is not free');
                 set(handles.subDivFeedback, 'String', textLabel);
                 return;
             end
-            textLabel = sprintf('... start is FREE!');
-            set(handles.subDivFeedback, 'String', textLabel);
             
             textLabel = sprintf('... finding goal box');
             set(handles.subDivFeedback, 'String', textLabel);
@@ -155,9 +155,6 @@ classdef SSS < handle
                 set(handles.subDivFeedback, 'String', textLabel);
                 return;
             end
-            
-            textLabel = sprintf('... goal is FREE!');
-            set(handles.subDivFeedback, 'String', textLabel);
             
             if ~obj.makeConnected(obj.startBox, obj.goalBox)
                 textLabel = sprintf('NO PATH: Start and goal do not connect');

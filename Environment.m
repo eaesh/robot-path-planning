@@ -69,22 +69,28 @@ classdef Environment < handle
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Display Robot at conf(a,b) with color c
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function showDisc(obj,a,b,c)
+        function showDisc(obj,a,b,c, alph)
             t = linspace(0, 2*pi);
             x = obj.radius*cos(t);
             y = obj.radius*sin(t);
+            alpha(alph)
             patch(x+a, y+b, c);
         end
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % SHOW PATH
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function showPath(obj,path)
-            disp('animating')
+        function showPath(obj,path, handles)
+            textLabel = sprintf('animating path');
+            set(handles.showPathFeedback, 'String', textLabel);
+            obj.showDisc(obj.start(1), obj.start(2), [0.5 0.5 0.5],.3);
+            drawnow
             for i = 1:length(path)
-                obj.showDisc(path(i).x, path(i).y, [0.5 0.5 0.5]);
+                obj.showDisc(path(i).x, path(i).y, [0.5 0.5 0.5],.3);
                 drawnow
             end
+            obj.showDisc(obj.goal(1), obj.goal(2), [0.5 0.5 0.5],.3);
+            drawnow
         end
         
         
@@ -120,7 +126,7 @@ classdef Environment < handle
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Display Environment:
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function obj = showEnv(obj, handles)
+        function obj = showEnv(obj)
 %             figure(1);
             cla;  % clear axes in GUI
             axis square tight;
@@ -130,8 +136,8 @@ classdef Environment < handle
             % show start and goal config:
             bluegreen=[0, 1, 1];
             redgreen=[1, 1, 0];
-            obj.showDisc(obj.start(1), obj.start(2), bluegreen);
-            obj.showDisc(obj.goal(1), obj.goal(2), redgreen);
+            obj.showDisc(obj.start(1), obj.start(2), bluegreen, 1);
+            obj.showDisc(obj.goal(1), obj.goal(2), redgreen, 1);
             
             %Display the obstacles in brown:
             brown = [0.8, 0.5, 0];
