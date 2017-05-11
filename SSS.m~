@@ -252,19 +252,17 @@ classdef SSS < handle
             disp(['Number of Elements: ', num2str(q.NumElements)])
 
             count = 0;
-%             pause = false;
+            pause = false;
             while obj.sdiv.unionF.find(startBox.idx) ~= obj.sdiv.unionF.find(goalBox.idx)
                 textLabel = sprintf(num2str(toc));
                 set(handles.subDivFeedback, 'String', textLabel);
                 drawnow
                 
-%                 if (strcmp(get(handles.pauseBttn,'String'), 'P A U S E'))
-%                     disp('about to unpause');
-%                     uiresume
-%                 if (strcmp(get(handles.pauseBttn,'String'), 'U N P A U S E'))
-%                     disp('about to pause');
-%                     uiwait
-%                 end
+                if (strcmp(get(handles.pauseBttn,'String'), 'U N P A U S E'))
+                    pause
+                elseif (strcmp(get(handles.pauseBttn,'String'), 'P A U S E'))
+                    pause = false;
+                end
                 
                 % If Queue is empty, no path can be found
                 if q.isEmpty()

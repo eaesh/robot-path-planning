@@ -17,12 +17,11 @@ function varargout = GUI(varargin)
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
-%
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 06-May-2017 13:55:49
+% Last Modified by GUIDE v2.5 11-May-2017 13:24:21
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -68,6 +67,12 @@ set(handles.showSub,'Enable','off');
 set(handles.showSub,'BackgroundColor',[0.909, 0.909, 0.909]);
 set(handles.vorDiagram,'Enable','off');
 set(handles.vorDiagram,'BackgroundColor',[0.909, 0.909, 0.909]);
+
+% textLabel = sprintf('P A U S E');
+% set(handles.pauseBttn, 'String', textLabel);
+% set(handles.pauseBttn,'Enable','off');
+% set(handles.pauseBttn,'BackgroundColor',[0.909, 0.909, 0.909]);
+
 textLabel = sprintf('');
 set(handles.showEnvFeedback, 'String', textLabel);
 set(handles.subDivFeedback, 'String', textLabel);
@@ -85,7 +90,6 @@ function varargout = GUI_OutputFcn(hObject, eventdata, handles)
 % Get default command line output from handles structure
 varargout{1} = handles.output;
 
-
 % --- Executes on button press in closeBttn.
 function closeBttn_Callback(hObject, eventdata, handles)
 % hObject    handle to closeBttn (see GCBO)
@@ -98,7 +102,7 @@ function exitBttn_Callback(hObject, eventdata, handles)
 % hObject    handle to exitBttn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+error('This program was closed by the user.');
 
 function envInput_Callback(hObject, eventdata, handles)
 % hObject    handle to envInput (see GCBO)
@@ -139,6 +143,9 @@ function showEnvBttn_Callback(hObject, eventdata, handles)
 % hObject    handle to showEnvBttn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global pause;
+
+pause = false;
 textLabel = sprintf('displaying environment');
 set(handles.showEnvFeedback, 'String', textLabel);
 filename = get(handles.envInput, 'String');
@@ -156,14 +163,26 @@ function showSub_Callback(hObject, eventdata, handles)
 textLabel = sprintf('... finding start box...');
 set(handles.subDivFeedback, 'String', textLabel);
 global pathS;
+global pause;
+
+pause = false;
+textLabel = sprintf(['P A U S E']);
+set(handles.pauseBttn, 'String', textLabel);
+set(handles.pauseBttn,'Enable','on');
+
 filename = get(handles.envInput, 'String');
 axes(handles.plot);
+tic;
 pathS = SSS.test(2, filename, handles);
+time = toc;
+disp(time);
 % disp('pathS?')
 % disp(pathS.hasPath)
 if pathS.hasPath == 1
     set(handles.showPath,'Enable','on');
     set(handles.showPath,'BackgroundColor',[0.184, 0.788, 0.678]);
+    textLabel = sprintf(['Time elapsed: ', num2str(time)]);
+    set(handles.subDivFeedback, 'String', textLabel);
 end
 
 
@@ -193,3 +212,25 @@ function vorDiagram_Callback(hObject, eventdata, handles)
 % hObject    handle to vorDiagram (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pauseBttn.
+function pauseBttn_Callback(hObject, eventdata, handles)
+% hObject    handle to pauseBttn (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global pause;
+pause = ~pause;
+if pause == true
+    textLabel = sprintf('U N P A U S E');
+    set(handles.pauseBttn, 'String', textLabel);
+    set(handles.pauseBttn, 'ForegroundColor', [0.278, 0.901, 0.705]);
+    set(handles.pauseBttn, 'BackgroundColor', [1,1,1]);
+    uiwait
+elseif pause == false
+    textLabel = sprintf('P A U S E');
+    set(handles.pauseBttn, 'String', textLabel);
+    set(handles.pauseBttn, 'ForegroundColor', [1, 0.631, 0.160]);
+    set(handles.pauseBttn, 'BackgroundColor', [1,1,1]);
+    uiresume
+end

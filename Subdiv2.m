@@ -10,7 +10,7 @@ classdef Subdiv2 < Subdiv1
         %q = [];          % array of mixed boxes
     end
     
-    properties ( Access = private)
+    properties (Access = private)
         %white = [1 1 1]
         %gray = [0.5 0.5 0.5]
         %red = [1 0 0]

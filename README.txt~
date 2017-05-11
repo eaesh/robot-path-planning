@@ -14,12 +14,4 @@ show the subdivisions made by the SSS algorithms, then display the path
 taken by the robot.
 
 What has not been fully implemented yet is the version of the SSS algorithm
-that classifies boxes based on the presence of the Voronoi diagram.
-
-* Some notes about each environment:
-* env0.txt: works well, just takes quite a bit of time to find the path
-  (approximately 2 minutes)
-* env1.txt: no path
-* env2.txt: start is not free
-* env3.txt: works well, fairly quick
-* env4.txt: easiest case with one obstacle
+that classifies bo
