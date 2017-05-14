@@ -3,7 +3,7 @@ classdef Subdiv3 < Subdiv2
     %%%%%%%%%%%%%%%%%%%%%
     properties
         sourceSet = [];         % Source Set of Boxes
-        fringe = [];
+        vorUnion;               % Union of Boxes connected by voronoi diagram
     end
     %%%%%%%%%%%%%%%%%%%%%
     
@@ -14,6 +14,7 @@ classdef Subdiv3 < Subdiv2
         function obj = Subdiv3(fname)
             obj = obj@Subdiv2(fname);
             obj.updateVorFeatures(obj.rootBox, obj.rootBox.features);
+            obj.vorUnion = UnionFind();
         end
         
         % Split Box 
@@ -23,14 +24,14 @@ classdef Subdiv3 < Subdiv2
                 i = Idx.quad(i_dash);
                 obj.updateVorFeatures(box.child(i));
             end
-            disp('------------------------------')
+            %disp('------------------------------')
         end
                     
         % Update Voronoi Features for given box 
         function updateVorFeatures(obj, box, features)
             % Features not given use parent box's vorFeats
             if nargin < 3
-                features = box.parent.voroFeats;
+                features = box.parent.vorFeats;
             end
             
             % Using Voronoi Feature Algorithm
@@ -42,24 +43,27 @@ classdef Subdiv3 < Subdiv2
             %disp(['Voronoi Clearance: ', num2str(clearance)]);
             %disp(['Box Width: ', num2str(rad)]);
             
-            disp('Closest Feature');
-            disp(closFeat);
+            %disp('Closest Feature');
+            %disp(closFeat);
             
             for i = 1:length(features)
                 if Geom2d.sep(midpoint, features{i}) <= rad
                     % Add as Voronoi Feature of Box
-                    box.voroFeats{length(box.voroFeats)+1} = features{i};
+                    box.vorFeats{length(box.vorFeats)+1} = features{i};
                 end            
-            end
-
-            
+            end    
         end
         
-        %{
-        function addToSourceSet(obj, box)
+        % Add to Source Set
+        function idx = addToSourceSet(obj, box)
             
+            % Add to end of array
+            obj.sourceSet = [obj.sourceSet box];
+            idx = length(obj.sourceSet);
+            box.sourceIdx = idx;
+            box.vorIdx = obj.vorUnion.ADD(box);
+            obj.vorUnion.union(box.vorIdx, obj.sourceSet(1).vorIdx);
         end
-        %}
         
         % Find Path from Start to Goal
         function path = findPath(obj, goal)

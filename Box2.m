@@ -24,14 +24,20 @@
 classdef Box2 < Box1
     
     properties
-        type;			% = FREE/MIXED/STUCK
+        type;               % = FREE/MIXED/STUCK
         features = {};		% set of features
-        voroFeats = {};     % set of voronoi features
-        pNbr = [];		% principal Nbrs - 1, 2, 3, 4 - N, W, S, E
-        visited = false;	% for Graph Search use later
-        idx;
-        shape = [];          % mapshape for box
-        prev;
+        shape = [];         % mapshape for box
+        pNbr = [];          % principal Nbrs - 1, 2, 3, 4 - N, W, S, E
+        
+        idx;                % UnionFind Index
+        
+        visited = false;	% BFS Search Var 
+        prev;               % BFS Search Var
+
+        vorFeats = {};      % set of voronoi features
+        sourceIdx = 0;      % Source Set Index
+        vorIdx = 0;         % Voronoi Union Index
+        
     end
     
     properties (Constant)
@@ -61,6 +67,7 @@ classdef Box2 < Box1
             end
             obj = obj@Box1(super_args{:});
             obj.setShape(xx, yy, ww);
+            obj.sourceIdx = 0;
         end
         
         % Creates mapshape for the box
@@ -70,21 +77,7 @@ classdef Box2 < Box1
             boxY = [(yy+ww) (yy+ww) (yy-ww) (yy-ww)];
             box.shape = mapshape(boxX, boxY);
         end
-        
-        % Temporarily: randomly classify
-        % This should be replaced by real classification later.
-        %
-        function classifyRandom(box)
-            random = rand(1);
-            if(random > 0.6)
-                box.type = BoxType.FREE;
-            elseif(random < 0.3)
-                box.type = BoxType.STUCK;
-            else
-                box.type = BoxType.MIXED;
-            end
-        end
-        
+                
         %Checks if the box is null box        
         function bool = isNull(obj)
             bool = (obj.w==0);

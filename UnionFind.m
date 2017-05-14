@@ -101,6 +101,7 @@ classdef UnionFind < handle
 	% FIND(x) returns the index of the representative of the 
 	%   equivalence class of ITEM(x).
             root = x;
+            disp(obj.PARENT(root));
             while (obj.PARENT(root) > 0)
                 root = obj.PARENT(root);
             end
