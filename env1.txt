@@ -53,8 +53,8 @@ PX: 0 1  1   0
 PY: 0 0 2.5 2.5
 
 %Triangle
-PX: 3 3 8 % this is triangle's x coordinates
-PY: 7 9 7 % this is triangle's y coordinates
+PX: 3 8 3 % this is triangle's x coordinates
+PY: 7 7 9 % this is triangle's y coordinates
 
 % L shape
 PX: 4 6 6 2 2 4

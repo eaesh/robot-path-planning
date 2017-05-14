@@ -26,6 +26,7 @@ classdef Box2 < Box1
     properties
         type;			% = FREE/MIXED/STUCK
         features = {};		% set of features
+        voroFeats = {};     % set of voronoi features
         pNbr = [];		% principal Nbrs - 1, 2, 3, 4 - N, W, S, E
         visited = false;	% for Graph Search use later
         idx;

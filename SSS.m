@@ -19,6 +19,7 @@ classdef SSS < handle
 		startBox=[];	% box containing the start config
 		goalBox=[];	% box containing the goal config
         hasPath=false;
+        count;      % Box Split Counter
 	end
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,64 +82,10 @@ classdef SSS < handle
 	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	    % mainLoop
 	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 	    function flag = mainLoop(obj)
-% 
-% 	        flag = false;
-%             disp('MainLoop Begins')
-%             
-%             alpha(0.1);
-%             % Find Start Box
-%             startConfig = obj.sdiv.env.start;
-% 	    	obj.startBox = obj.makeFree(startConfig);
-%             if isempty(obj.startBox)
-%                 disp('NOPATH: start is not free');
-%                 return;
-%             else 
-%                 hold on;
-%                 disp('StartBox is Found!')
-%                 obj.sdiv.plotLeaf(obj.startBox, BoxType.FREE);
-%                 hold off;
-%             end
-%             
-%             % Plot Start Box
-%             obj.sdiv.plotLeaf();
-%             drawnow
-%             %}
-%             
-%             
-%             % Find Goal Box
-% 	    	goalConfig = obj.sdiv.env.goal;
-%             obj.goalBox = obj.makeFree(goalConfig);
-%             if isempty(obj.goalBox)
-%                 disp('NOPATH: goal is not free');
-%                 return;
-%             else
-%                 hold on;
-%                 disp('GoalBox is Found!')
-%                 obj.sdiv.plotLeaf(obj.goalBox, BoxType.FREE)
-%                 hold off;
-%             end
-%             
-%             % Plot Goal Box
-%             obj.sdiv.plotLeaf();
-%             drawnow
-%             %}
-%             
-%             
-%             if (~obj.makeConnected(obj.startBox, obj.goalBox))
-%                 display('NOPATH: start and goal not connected');
-%                 return;
-%             else
-%                 % Box Split and Path Found
-%                 flag = true;
-%             end
-%             %}
-%         end
-
-
         function flag = mainLoop(obj, handles)
             flag = false;
             
+            % Find Start Box
             obj.startBox = obj.makeFree(obj.sdiv.env.start);
             if size(obj.startBox, 2) == 0
                 textLabel = sprintf('NO PATH: Start is not free');
@@ -148,6 +95,7 @@ classdef SSS < handle
             textLabel = sprintf('... start is FREE!...');
             set(handles.subDivFeedback, 'String', textLabel);
             
+            % Find Goal Box
             textLabel = sprintf('... finding goal box...');
             set(handles.subDivFeedback, 'String', textLabel);
             obj.goalBox = obj.makeFree(obj.sdiv.env.goal);
@@ -160,6 +108,7 @@ classdef SSS < handle
             textLabel = sprintf('... goal is FREE!...');
             set(handles.subDivFeedback, 'String', textLabel);
             
+            % Find Path Between Start and Goal
             if ~obj.makeConnected(obj.startBox, obj.goalBox, handles)
                 textLabel = sprintf('NO PATH: Start and goal do not connect');
                 set(handles.subDivFeedback, 'String', textLabel);
@@ -168,6 +117,7 @@ classdef SSS < handle
             
             textLabel = sprintf('PATH FOUND! Animate the path below.');
             set(handles.subDivFeedback, 'String', textLabel);
+            
             flag = true;
         end
         
@@ -199,7 +149,9 @@ classdef SSS < handle
                 % Split box until FREE box is found containing config
                 while (box.type == BoxType.MIXED)
                     obj.sdiv.split(box);
+                    obj.sdiv.plotLeaf(box);
                     box = obj.getLeaf(box, config);
+                    drawnow
                 end
             end
             % BoxType is not free, it is STUCK or SMALL
@@ -251,8 +203,8 @@ classdef SSS < handle
             disp('QUEUE COMPLETED')
             disp(['Number of Elements: ', num2str(q.NumElements)])
 
-            count = 0;
-%             pause = false;
+            obj.count = 0;
+%           pause = false;
             while obj.sdiv.unionF.find(startBox.idx) ~= obj.sdiv.unionF.find(goalBox.idx)
                 textLabel = sprintf(num2str(toc));
                 set(handles.subDivFeedback, 'String', textLabel);
@@ -273,30 +225,35 @@ classdef SSS < handle
                 end
                 
                 % Count iterations
-                count = count + 1;                
-                if mod(count,50) == 0
+                obj.count = obj.count + 1;   
+                if mod(obj.count,50) == 0
                     fprintf('.')
-                    obj.sdiv.plotLeaf();
-                    drawnow
+                    %obj.sdiv.plotLeaf();
+                    %drawnow
                 end
-                                
+                %}
+                
                 % Pop queue and split.
                 % Add child to the Q if it hasn't been classified
                 % and is bigger than epsilon.
                 box = q.remove();
                 obj.sdiv.split(box);
                 children = box.child;
+                hold on;
                 for c = 1:length(children)
                     child = children(c);
+                    obj.sdiv.plotLeaf(child);
+                    drawnow
                     if child.type == BoxType.MIXED
                         q.add(child); 
                     end
                 end
+                hold off;
             end
             
-            disp(['COUNT: ', num2str(count)])
-            obj.sdiv.plotLeaf();
-            drawnow
+            disp(['COUNT: ', num2str(obj.count)])
+            %obj.sdiv.plotLeaf();
+            %drawnow
             
             disp('STARTBOX PARENT')
             disp(obj.sdiv.unionF.find(startBox.idx))
@@ -389,16 +346,102 @@ classdef SSS < handle
 %             s.run(1);
             flag = pathS;
         end
+           
+        % Voronoi
+        function flag = test2() 
+            obj = SSS("env3.txt");
+            obj.showEnv();
+            obj.sdiv = Subdiv3(obj.fname);
+            flag = false;
+            
+            hold on;
+            % Find Start Box
+            obj.startBox = obj.makeFree(obj.sdiv.env.start);
+            if size(obj.startBox, 2) == 0
+                disp('NO PATH: Start is not free');
+                return;
+            end
+            obj.sdiv.plotLeaf(obj.startBox);
+            % Add Type Free StartBox to Source Set
+            obj.sdiv.sourceSet = [obj.sdiv.sourceSet obj.startBox];
+            disp('... start is FREE!...');
+            
+            
+            % Find Goal Box
+            obj.goalBox = obj.makeFree(obj.sdiv.env.goal);
+            if size(obj.goalBox, 2) == 0
+                disp('NO PATH: Goal is not free');
+                return;
+            end
+            obj.sdiv.plotLeaf(obj.goalBox);
+            disp('... goal is FREE!...');
+            hold off;
+            
+            
+            % Find Path with Voronoi
+            %{
+            while obj.sdiv.unionF.find(startBox.idx) ~= obj.sdiv.unionF.find(goalBox.idx)
                 
-        function test2() 
-            fudge = [2, 4, 6, 8, 10];
-            fudge2 = fudge([1:2, 4:end]);
+                % If Fring is empty, no path can be found 
+                if obj.sdiv.fringe.isEmpty()
+                    disp('Fringe is Empty');
+                    flag = false;
+                    break;
+                end
+                
+                % Count iterations
+                obj.count = obj.count + 1;   
+                if mod(obj.count,50) == 0
+                    fprintf('.')
+                end
+                
+                
+                % Pop queue and split.
+                % Add child to the Q if it hasn't been classified
+                % and is bigger than epsilon.
+                box = q.remove();
+                obj.sdiv.split(box);
+                children = box.child;
+                hold on;
+                for c = 1:length(children)
+                    child = children(c);
+                    obj.sdiv.plotLeaf(child);
+                    drawnow
+                    if child.type == BoxType.MIXED
+                        q.add(child); 
+                    end
+                end
+                hold off;
+            end
+            %}
+                
+                
+                
+                
+                
+                
+            hold on;
+            %feats = obj.startBox.voroFeats;
+            feats = obj.sdiv.rootBox.voroFeats;
+            %obj.sdiv.split(obj.sdiv.rootBox);
+            for i = 1:length(feats)
+                %disp(feats{i});
+                plot(feats{i}.X,feats{i}.Y,'--r');
+            end
+            hold off;
+            %{
+            if ~obj.makeConnected(obj.startBox, obj.goalBox, handles)
+                textLabel = sprintf('NO PATH: Start and goal do not connect');
+                set(handles.subDivFeedback, 'String', textLabel);
+                return;
+            end
             
-            disp(length(fudge))
-            disp(length(fudge2))
+            textLabel = sprintf('PATH FOUND! Animate the path below.');
+            set(handles.subDivFeedback, 'String', textLabel);
+            flag = true;
+            %}
             
-            disp(fudge)
-            disp(fudge2)
+            
         end
     end
 end % SSS class

@@ -157,6 +157,16 @@ classdef UnionFind < handle
 	    % the next 2 lines can be replaced by show().
 	    disp('-->> ITEM :');  disp(a.ITEM);
 	    disp('-->> PARENT :'); disp(a.PARENT);
-	   end
+    end
+    
+    function test2()
+        a = UnionFind;
+	    ADD(a,10); ADD(a,11); ADD(a,12); ADD(a,13); ADD(a,14);
+        union(a,2,1); union(a,3,2); union(a,4,3); union(a,5,4);
+        
+        disp(a.ITEM);
+        disp(a.PARENT);
+
+    end
 	end
 end

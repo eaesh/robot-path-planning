@@ -209,6 +209,11 @@ classdef Subdiv2 < Subdiv1
                 closFeat = findClosestFeature(obj,box);
                 midpoint = mapshape(box.x, box.y);   % Midpoint of Box
                 
+                disp('BOX MIDPOINT: ');
+                disp(midpoint);
+                disp('CLOSEST FEATURE: ');
+                disp(closFeat);
+                
                 if length(closFeat.X) > 1         % First case (Edge)
                     %disp('FIRST CASE -------------------')
                     a = mapshape(closFeat.X(1), closFeat.Y(1));
@@ -243,23 +248,25 @@ classdef Subdiv2 < Subdiv1
             end % if parent/small/mixed
         end % function classify
 
-        function closFeat = findClosestFeature(obj,box) % 'helper method for classify()
-            features = box.parent.features;
-            dist = max(obj.env.BoundingBox.X) - min(obj.env.BoundingBox.X);
+        function closFeat = findClosestFeature(obj,box, features) % 'helper method for classify()
+            if nargin < 3
+                features = box.parent.features;
+            end
+            dist = max(obj.env.BoundingBox.X) - min(obj.env.BoundingBox.X); % Max distance between Two Points within Bounding Box
 
             % Load Feature Set of Parent Box
             for i = 1:length(features)
                 midpoint = mapshape(box.x, box.y);   % Midpoint of Box
 
-                if Geom2d.sep(midpoint, features{1}) < dist
-                    dist  = Geom2d.sep(midpoint, features{1});
-                    closFeat = features{1};
+                if Geom2d.sep(midpoint, features{i}) < dist
+                    dist  = Geom2d.sep(midpoint, features{i});
+                    closFeat = features{i};
                 end
-                
             end
         end
                 
-        function plotLeaf(obj,box, type)
+        % Plot all Leaf Children of given Box/rootBox
+        function plotLeaf(obj, box, type)
             if nargin < 2
                 box = obj.rootBox;
             end
@@ -267,17 +274,20 @@ classdef Subdiv2 < Subdiv1
                 type = BoxType.UNKNOWN;
             end
             %plot(box.shape().X,box.shape().Y,'b-');
-            hold on;
+            %hold on;
             alpha(0.2);
             obj.plotLeaves(box,type);
-            hold off;
+            %hold off;
         end
         
+        % Recursive helper method for plotLeaf
         function plotLeaves(obj, box, type)
             if(box.isLeaf && (box.type == type || type == BoxType.UNKNOWN))
-                alpha(0.2);
+                hold on;
+                alpha(0.3);
                 fill(box.shape().X,box.shape().Y,obj.colo(box.type + 4,:));
                 plot(box.shape().X,box.shape().Y,'b-');
+                hold off;
             else
                 for i = 1:length(box.child)
                     obj.plotLeaves(box.child(i),type);
@@ -294,7 +304,7 @@ classdef Subdiv2 < Subdiv1
             if nargin < 4
                 dir = 0;
             end
-            hold on;
+            %hold on;
             alpha(0.2)
             fill(box.shape().X, box.shape().Y, [0 1 0]);
             plot(box.shape().X, box.shape().Y, 'b-');
@@ -317,9 +327,9 @@ classdef Subdiv2 < Subdiv1
             xlim([obj.rootBox.x - obj.rootBox.w, obj.rootBox.x + obj.rootBox.w]);
             ylim([obj.rootBox.y - obj.rootBox.w, obj.rootBox.y + obj.rootBox.w]);
             
-            hold off;
+            %hold off;
         end
-        
+%{        
         function path = findPath(obj, start, goal)
             %{
             if nargin < 2
@@ -403,29 +413,6 @@ classdef Subdiv2 < Subdiv1
             end
         end
         
-        function BFS(obj, start, goal)
-            start.visited = true;
-            Q = [start];
-            while ~ isempty(Q)
-                B = Q(1);
-                Q(1) = [];
-                neighbors = obj.getNeighbours(B);
-                for n = 1:length(neighbors)
-                    b = neighbors(n);
-                    if b == goal
-                        goal.prev = B;
-                        return;
-                    elseif (b.type == BoxType.FREE)
-                        if ~b.visited
-                            Q = [Q b];
-                            b.prev = B;
-                            b.visited = true;
-                        end
-                    end
-                end
-            end
-        end
-        
         function path = DFS2(obj, path, box, goal)
             path = [path box.idx];
             disp(path)
@@ -456,6 +443,30 @@ classdef Subdiv2 < Subdiv1
                 path = [];                    
             end
         end
+%}
+        function BFS(obj, start, goal)
+            start.visited = true;
+            Q = [start];
+            while ~ isempty(Q)
+                B = Q(1);
+                Q(1) = [];
+                neighbors = obj.getNeighbours(B);
+                for n = 1:length(neighbors)
+                    b = neighbors(n);
+                    if b == goal
+                        goal.prev = B;
+                        return;
+                    elseif (b.type == BoxType.FREE)
+                        if ~b.visited
+                            Q = [Q b];
+                            b.prev = B;
+                            b.visited = true;
+                        end
+                    end
+                end
+            end
+        end
+        
         
         % Removed 'visited' mark after findPath is complete so it can be
         % used again
