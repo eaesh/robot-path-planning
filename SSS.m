@@ -83,6 +83,7 @@ classdef SSS < handle
 	    % mainLoop
 	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function flag = mainLoop(obj, handles)
+            obj.showEnv();
             flag = false;
             
             % Find Start Box
@@ -380,6 +381,14 @@ classdef SSS < handle
 	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	    function showEnv(obj)
             obj.sdiv.env.showEnv();
+        end
+        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    % showPathVor(path)
+	    %		Animation of the path for Voronoi boxes
+	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    function showPathVor(obj, handles)
+            obj.sdiv.env.showPath(obj.sdiv.sourceSet, handles);
 	    end
 
 	end
@@ -387,37 +396,12 @@ classdef SSS < handle
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	methods (Static = true)
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	    % test()
-	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	    function flag = test(val, filename, handles, pathS)
-            if nargin < 4
-                pathS = 0;
-            end
-            s = SSS(filename);
-            if (val == 1)
-                s.showEnv();
-            elseif (val == 2)
-                flag = s.mainLoop(handles);
-                pathS = s;
-                if flag
-                    s.hasPath = true;
-                end
-            elseif (val == 3)
-                pathS.showPath(handles);
-            end
-%             s.showEnv(handles);
-%             s.run(1);
-            flag = pathS;
-        end
            
         % Voronoi
-        function flag = test2() 
+        function flag = test2(obj,filename, handles) 
             flag = false;
             
-            obj = SSS("env3.txt");              % Select Enviroment File
+%             obj = SSS('env3.txt');              % Select Enviroment File
             obj.showEnv();                      % Display Environment in Figure
             obj.sdiv = Subdiv3(obj.fname);      % Set to Subdiv3 for Voronoi Support
             fringe = PriorityQueue();           % Fringe for Voronoi Algorithms
@@ -425,7 +409,9 @@ classdef SSS < handle
             % Find Start Box
             obj.startBox = obj.makeFree(obj.sdiv.env.start);
             if size(obj.startBox, 2) == 0
-                disp('NO PATH: Start is not free');
+                textLabel = sprintf('NO PATH: start is not free!');
+                set(handles.vorFeedback, 'String', textLabel);
+                flag = false;
                 return;
             end
             
@@ -441,17 +427,21 @@ classdef SSS < handle
             %}
             %plot(obj.startBox.shape().X, obj.startBox.shape().Y,'--r'); % Plot StartBox as part of Source Set
             
-            disp('... start is FREE!...');
+            textLabel = sprintf('... start is free ...');
+            set(handles.vorFeedback, 'String', textLabel);
             %}
             
             % Find Goal Box
             obj.goalBox = obj.makeFree(obj.sdiv.env.goal);
             if size(obj.goalBox, 2) == 0
-                disp('NO PATH: Goal is not free');
+                textLabel = sprintf('NO PATH: GOAL IS NOT FREE');
+                set(handles.vorFeedback, 'String', textLabel);
+                flag = false;
                 return;
             end
             obj.sdiv.plotLeaf(obj.goalBox);
-            disp('... goal is FREE!...');
+            textLabel = sprintf('... goal is free ...');
+            set(handles.vorFeedback, 'String', textLabel);
             %}
             
             
@@ -556,7 +546,7 @@ classdef SSS < handle
             end
             disp(['Count: ', num2str(obj.count)]);
             disp(['Source Size: ', num2str(length(obj.sdiv.sourceSet))]);
-            %}            
+            flag = true;
         end
         
         function test3() 
@@ -576,6 +566,40 @@ classdef SSS < handle
             
             
         end
+        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    % test()
+	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    function flag = test(val, filename, handles, pathS)
+            if nargin < 4
+                pathS = 0;
+            end
+            s = SSS(filename);
+            if (val == 1)
+                s.showEnv();
+            elseif (val == 2)
+                flag = s.mainLoop(handles);
+                pathS = s;
+                if flag
+                    s.hasPath = true;
+                end
+            elseif (val == 3)
+                if (strcmp(get(handles.showPath,'String'), 'S H O W   P A T H  :  H W 4   S S S'))
+                    pathS.showPath(handles);
+                elseif (strcmp(get(handles.showPath,'String'), 'S H O W   P A T H  :  V O R O N O I'))
+                    pathS.showPathVor(handles);
+                end
+            elseif (val == 4)
+                flag = SSS.test2(s,filename, handles)
+                pathS = s;
+                if flag
+                    s.hasPath = true;
+                end
+            end
+%             s.showEnv(handles);
+%             s.run(1);
+            flag = pathS;
+        end
+        
     end
 end % SSS class
-

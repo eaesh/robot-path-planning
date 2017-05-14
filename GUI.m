@@ -21,7 +21,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 11-May-2017 13:24:21
+% Last Modified by GUIDE v2.5 14-May-2017 09:23:29
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -67,6 +67,7 @@ set(handles.showSub,'Enable','off');
 set(handles.showSub,'BackgroundColor',[0.909, 0.909, 0.909]);
 set(handles.vorDiagram,'Enable','off');
 set(handles.vorDiagram,'BackgroundColor',[0.909, 0.909, 0.909]);
+set(handles.showEnvBttn,'Enable','on');
 
 % textLabel = sprintf('P A U S E');
 % set(handles.pauseBttn, 'String', textLabel);
@@ -102,7 +103,7 @@ function exitBttn_Callback(hObject, eventdata, handles)
 % hObject    handle to exitBttn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-error('This program was closed by the user.');
+exit;
 
 function envInput_Callback(hObject, eventdata, handles)
 % hObject    handle to envInput (see GCBO)
@@ -146,13 +147,19 @@ function showEnvBttn_Callback(hObject, eventdata, handles)
 global pause;
 
 pause = false;
-textLabel = sprintf('displaying environment');
+textLabel = sprintf('... displaying environment ...');
 set(handles.showEnvFeedback, 'String', textLabel);
 filename = get(handles.envInput, 'String');
 axes(handles.plot);
+
 flag = SSS.test(1, filename, handles);
+
 set(handles.showSub,'Enable','on');
 set(handles.showSub,'BackgroundColor',[0.650, 0.368, 0.819]);
+set(handles.vorDiagram,'Enable','on');
+set(handles.vorDiagram,'BackgroundColor',[0.945, 0.219, 0.360]);
+textLabel = sprintf('Environment displayed!');
+set(handles.showEnvFeedback, 'String', textLabel);
 
 
 % --- Executes on button press in showSub.
@@ -181,8 +188,10 @@ disp(time);
 if pathS.hasPath == 1
     set(handles.showPath,'Enable','on');
     set(handles.showPath,'BackgroundColor',[0.184, 0.788, 0.678]);
-    textLabel = sprintf(['Time elapsed: ', num2str(time)]);
+    textLabel = sprintf(['Time elapsed: ', num2str(time),' seconds']);
     set(handles.subDivFeedback, 'String', textLabel);
+    textLabel = sprintf('S H O W   P A T H  :  H W 4   S S S');
+    set(handles.showPath, 'String', textLabel);
 end
 
 
@@ -212,7 +221,32 @@ function vorDiagram_Callback(hObject, eventdata, handles)
 % hObject    handle to vorDiagram (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+textLabel = sprintf('... finding start box ...');
+set(handles.vorFeedback, 'String', textLabel);
+global pathS;
+global pause;
 
+pause = false;
+textLabel = sprintf(['P A U S E']);
+set(handles.pauseBttn, 'String', textLabel);
+set(handles.pauseBttn,'Enable','on');
+
+filename = get(handles.envInput, 'String');
+axes(handles.plot);
+
+tic;
+pathS = SSS.test(4, filename, handles);
+time = toc;
+disp(time);
+
+if pathS.hasPath == 1
+    set(handles.showPath,'Enable','on');
+    set(handles.showPath,'BackgroundColor',[0.184, 0.788, 0.678]);
+    textLabel = sprintf(['Time elapsed: ', num2str(time),' seconds']);
+    set(handles.vorFeedback, 'String', textLabel);
+    textLabel = sprintf('S H O W   P A T H  :  V O R O N O I');
+    set(handles.showPath, 'String', textLabel);
+end
 
 % --- Executes on button press in pauseBttn.
 function pauseBttn_Callback(hObject, eventdata, handles)

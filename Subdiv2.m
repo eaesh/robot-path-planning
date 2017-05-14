@@ -30,15 +30,13 @@ classdef Subdiv2 < Subdiv1
                 fname = 'env0.txt';
             end
             env = Environment(fname);
-            
-            % Assuming the convention that our bounding box starts from SW
-            % corner and the remaining points are the other three corners in
-            % clock-wise order
             BoundingBox = env.BoundingBox;
             x = (BoundingBox.X(1)+ BoundingBox.X(2)+ BoundingBox.X(3)+ BoundingBox.X(4))/4;
             y = (BoundingBox.Y(1)+ BoundingBox.Y(2)+ BoundingBox.Y(3)+ BoundingBox.Y(4))/4;
+            %Assuming the convention that our bounding box starts from SW
+            %corner and the remaining points are the other three corners in
+            %clock-wise order
             w = abs(x - BoundingBox.X(1));
-            
             % Constructor for SubDiv
             obj = obj@Subdiv1(x,y,w);
             obj.rootBox.pNbr = [Box2.null Box2.null Box2.null Box2.null];
@@ -210,7 +208,12 @@ classdef Subdiv2 < Subdiv1
                 % Find closest feature
                 closFeat = findClosestFeature(obj,box);
                 midpoint = mapshape(box.x, box.y);   % Midpoint of Box
-                                
+                
+                disp('BOX MIDPOINT: ');
+                disp(midpoint);
+                disp('CLOSEST FEATURE: ');
+                disp(closFeat);
+                
                 if length(closFeat.X) > 1         % First case (Edge)
                     %disp('FIRST CASE -------------------')
                     a = mapshape(closFeat.X(1), closFeat.Y(1));

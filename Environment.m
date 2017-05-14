@@ -54,7 +54,7 @@ classdef Environment < handle
             % obj = obj@handle(); % call base class
             
             oo = Environment.readFile(fname);
-            disp(num2str(oo.epsilon));
+%             disp(num2str(oo.epsilon));
             % copy:
             obj.epsilon = oo.epsilon;
             obj.radius = oo.radius;
