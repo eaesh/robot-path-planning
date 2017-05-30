@@ -1,10 +1,10 @@
 # Path Planning For Disc Robot
-## Melissa Lopez & Eshan Saran
+**Melissa Lopez & Eshan Saran**
 
-## Final Project for *Robotics* course at NYU, by Professor Chee Yap
-## *Last Updated: Monday, May 15*
+**Final Project for *Robotics* course at NYU, by Professor Chee Yap**
+**Last Updated: Monday, May 15**
 
-## TO RUN THIS PROGRAM;
+**TO RUN THIS PROGRAM**
 1. Navigate to robot-path-planning-mater in MATLAB
 2. Type "GUI" into the Command Window in MATLAB
 3. The interface will appear.
