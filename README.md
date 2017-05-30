@@ -4,6 +4,8 @@
 **Final Project for *Robotics* course at NYU, Spring 2017 by Professor Chee Yap**, 
 **Last Updated: Monday, May 15**
 
+![Alt text](/7.png?raw=true "Test")  
+
 **TO RUN THIS PROGRAM**
 1. Navigate to robot-path-planning-mater in MATLAB
 2. Type "GUI" into the Command Window in MATLAB
