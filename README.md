@@ -1,7 +1,7 @@
-# Path Planning For Disc Robot
+# Path Planning For Disc Robot with Soft Subdivision Search and Voronoi Heuristic
 **Melissa Lopez & Eshan Saran**
 
-**Final Project for *Robotics* course at NYU, by Professor Chee Yap**
+**Final Project for *Robotics* course at NYU, Spring 2017 by Professor Chee Yap**
 **Last Updated: Monday, May 15**
 
 **TO RUN THIS PROGRAM**
